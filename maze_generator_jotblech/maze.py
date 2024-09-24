@@ -20,9 +20,6 @@ class MazeGenerator:
         self.end_pos = None
         self.seed = seed
 
-        if seed is not None:
-            random.seed(seed)
-
         if width is not None and height is not None:
             # Ensure width and height are odd numbers to maintain maze structure
             self.width = width if width % 2 == 1 else width + 1
@@ -30,7 +27,7 @@ class MazeGenerator:
             # Initialize the maze grid with walls (1s)
             self.maze = [[1 for i in range(self.width)] for i in range(self.height)]
 
-    def generate_maze(self, start_pos=None, end_pos=None):
+    def generate_maze(self, start_pos=None, end_pos=None, seed=None):
         """
         Generates the maze using the iterative backtracking algorithm.
 
@@ -40,6 +37,11 @@ class MazeGenerator:
         """
         if self.width is None or self.height is None:
             raise ValueError("Maze dimensions are not set.")
+
+        if seed is not None:
+            random.seed(seed)
+        elif self.seed is not None:
+            random.seed(self.seed)
 
         # Set custom start and end positions if provided
         self.start_pos = start_pos if start_pos else (0, 1)
