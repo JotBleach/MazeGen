@@ -1,4 +1,3 @@
-
 # Maze Generator
 
 ![Maze Visualization](https://img.shields.io/badge/maze-generator-blue) ![Python](https://img.shields.io/badge/python-3.6%2B-brightgreen)
@@ -15,7 +14,7 @@ Maze Generator is a Python library for generating, visualizing, and saving maze 
 
 You can install the library via `pip`:
 
-'''bash
+```bash
 pip install maze-generator
 ```
 
