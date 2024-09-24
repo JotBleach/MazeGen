@@ -4,7 +4,7 @@ import numpy as np
 import csv
 
 class MazeGenerator:
-    def __init__(self, width=None, height=None, seed=None):
+    def __init__(self, width: int = None, height: int = None, seed = None):
         """
         Initializes the maze generator.
 
@@ -28,7 +28,7 @@ class MazeGenerator:
             self.width = width if width % 2 == 1 else width + 1
             self.height = height if height % 2 == 1 else height + 1
             # Initialize the maze grid with walls (1s)
-            self.maze = [[1 for _ in range(self.width)] for _ in range(self.height)]
+            self.maze = [[1 for i in range(self.width)] for i in range(self.height)]
 
     def generate_maze(self):
         if self.width is None or self.height is None:
@@ -79,7 +79,7 @@ class MazeGenerator:
                 # Backtrack to the previous cell
                 stack.pop()
 
-    def set_maze(self, maze_array):
+    def set_maze(self, maze_array: list[int], start_pos: tuple = None, end_pos: tuple = None):
         """
         Sets the maze grid from a given array.
 
@@ -94,8 +94,8 @@ class MazeGenerator:
         self.width = len(maze_array[0])
 
         # Reset start and end positions
-        self.start_pos = None
-        self.end_pos = None
+        self.start_pos = start_pos
+        self.end_pos = end_pos
 
     def visualize_maze(self, save_path=None):
         """
@@ -167,32 +167,5 @@ class MazeGenerator:
             for row in reader:
                 maze_array.append([int(cell) for cell in row])
 
-        self.set_maze(maze_array)
-        print(f"Maze data loaded from {file_path}")
-
-    def save_maze_as_text(self, file_path):
-        """
-        Saves the maze grid to a text file.
-
-        Parameters:
-        - file_path (str): The file path to save the maze data.
-        """
-        if self.maze is None:
-            raise ValueError("Maze grid is not set.")
-
-        with open(file_path, 'w') as f:
-            for row in self.maze:
-                f.write(''.join(str(cell) for cell in row) + '\n')
-        print(f"Maze data saved to {file_path}")
-
-    def load_maze_from_text(self, file_path):
-        """
-        Loads the maze grid from a text file.
-
-        Parameters:
-        - file_path (str): The file path to load the maze data from.
-        """
-        with open(file_path, 'r') as f:
-            maze_array = [[int(cell) for cell in line.strip()] for line in f]
         self.set_maze(maze_array)
         print(f"Maze data loaded from {file_path}")
