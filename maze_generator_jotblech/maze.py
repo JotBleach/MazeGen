@@ -79,9 +79,6 @@ class MazeGenerator:
                 # Backtrack to the previous cell
                 stack.pop()
 
-    def get_maze(self):
-        return self.maze
-
     def set_maze(self, maze_array):
         """
         Sets the maze grid from a given array.
@@ -99,9 +96,6 @@ class MazeGenerator:
         # Reset start and end positions
         self.start_pos = None
         self.end_pos = None
-
-    def get_start_end_positions(self):
-        return self.start_pos, self.end_pos
 
     def visualize_maze(self, save_path=None):
         """
