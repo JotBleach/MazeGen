@@ -21,13 +21,11 @@ class MazeGenerator:
         self.seed = seed
 
         if width is not None and height is not None:
-            # Ensure width and height are odd numbers to maintain maze structure
             self.width = width if width % 2 == 1 else width + 1
             self.height = height if height % 2 == 1 else height + 1
-            # Initialize the maze grid with walls (1s)
             self.maze = [[1 for i in range(self.width)] for i in range(self.height)]
 
-    def generate_maze(self, start_pos=None, end_pos=None, seed=None):
+    def generate_maze(self, start_pos = None, end_pos = None, add_loops = False, loop_probability = 0.1, seed = None):
         """
         Generates the maze using the iterative backtracking algorithm.
 
@@ -38,29 +36,27 @@ class MazeGenerator:
         if self.width is None or self.height is None:
             raise ValueError("Maze dimensions are not set.")
 
+        # Set the seed for reproducibility
         if seed is not None:
             random.seed(seed)
         elif self.seed is not None:
             random.seed(self.seed)
-
-        # Set custom start and end positions if provided
+        
         self.start_pos = start_pos if start_pos else (0, 1)
         self.end_pos = end_pos if end_pos else (self.height - 1, self.width - 2)
 
-        # Ensure the start and end positions are within maze boundaries and on pathable positions
         if not self._is_valid_position(self.start_pos) or not self._is_valid_position(self.end_pos):
             raise ValueError("Start or end position is invalid or outside the maze boundaries.")
 
-        # Start carving from a random odd coordinate
         start_x = random.randrange(1, self.width, 2)
         start_y = random.randrange(1, self.height, 2)
 
-        # Begin the maze generation using iterative backtracking
         self._carve_path_iterative(start_x, start_y)
-
-        # Carve out the entrance and exit in the maze grid
         self.maze[self.start_pos[0]][self.start_pos[1]] = 0
         self.maze[self.end_pos[0]][self.end_pos[1]] = 0
+
+        if add_loops:
+            self._add_loops(loop_probability)
 
     def _is_valid_position(self, pos):
         """
@@ -68,13 +64,11 @@ class MazeGenerator:
 
         Parameters:
         - pos (tuple): Position to validate as (row, column).
-
         Returns:
         - bool: True if the position is valid, False otherwise.
         """
         row, col = pos
         if 0 <= row < self.height and 0 <= col < self.width:
-            # Ensure the position is not on a wall (1)
             return self.maze[row][col] == 1
         return False
 
@@ -102,11 +96,44 @@ class MazeGenerator:
                         # Push the neighbor cell onto the stack
                         stack.append((nx, ny))
                         found = True
-                        break  # Continue carving from the new cell
+                        break
 
             if not found:
                 # Backtrack to the previous cell
                 stack.pop()
+                
+    def _add_loops(self, loop_probability):
+        """
+        Adds random loops to the maze by removing walls with a certain probability.
+
+        Parameters:
+        - loop_probability (float): The probability of adding a loop in the maze.
+        """
+        for y in range(1, self.height - 1):
+            for x in range(1, self.width - 1):
+                if self.maze[y][x] == 1:
+                    neighbors = self._count_adjacent_paths(x, y)
+                    if neighbors >= 2 and random.random() < loop_probability:
+                        self.maze[y][x] = 0
+
+    def _count_adjacent_paths(self, x, y):
+        """
+        Counts the number of path cells adjacent to a given wall cell.
+
+        Parameters:
+        - x (int): The x-coordinate of the cell.
+        - y (int): The y-coordinate of the cell.
+
+        Returns:
+        - int: The number of adjacent path cells.
+        """
+        directions = [(0, -1), (1, 0), (0, 1), (-1, 0)]
+        count = 0
+        for dx, dy in directions:
+            nx, ny = x + dx, y + dy
+            if 0 <= nx < self.width and 0 <= ny < self.height and self.maze[ny][nx] == 0:
+                count += 1
+        return count
 
     def set_maze(self, maze_array: list[int], start_pos: tuple = None, end_pos: tuple = None):
         """
@@ -115,14 +142,13 @@ class MazeGenerator:
         Parameters:
         - maze_array (list of lists): The maze grid to set.
         """
+        
         if not maze_array:
             raise ValueError("Provided maze array is empty.")
 
         self.maze = maze_array
         self.height = len(maze_array)
         self.width = len(maze_array[0])
-
-        # Reset start and end positions
         self.start_pos = start_pos
         self.end_pos = end_pos
 
@@ -136,35 +162,26 @@ class MazeGenerator:
         if self.maze is None:
             raise ValueError("Maze grid is not set.")
 
-        # Convert maze to a NumPy array for better handling with matplotlib
         maze_array = np.array(self.maze)
+        cmap = plt.cm.binary
 
-        # Create a color map: walls will be black, paths will be white
-        cmap = plt.cm.binary  # 'binary' colormap: 0 is white, 1 is black
-
-        # Create the plot
         fig, ax = plt.subplots(figsize=(10, 10))
         ax.imshow(maze_array, cmap=cmap, interpolation='none')
 
-        # Highlight the start and end positions if they are set
         if self.start_pos:
-            ax.scatter(self.start_pos[1], self.start_pos[0], c='green', s=100, label='Start')
+            ax.scatter(self.start_pos[1], self.start_pos[0], c='green', s=50, label='Start')
         if self.end_pos:
-            ax.scatter(self.end_pos[1], self.end_pos[0], c='red', s=100, label='End')
+            ax.scatter(self.end_pos[1], self.end_pos[0], c='red', s=50, label='End')
 
-        # Remove the axes for clarity
         ax.axis('off')
 
-        # Add a legend for the start and end points if they are set
         if self.start_pos or self.end_pos:
             ax.legend(loc='upper right')
 
-        # Save the visualization if a path is provided
         if save_path:
             plt.savefig(save_path, bbox_inches='tight', pad_inches=0)
             print(f"Maze visualization saved to {save_path}")
 
-        # Display the plot
         plt.show()
 
     def save_maze_as_csv(self, file_path):
@@ -195,6 +212,5 @@ class MazeGenerator:
             maze_array = []
             for row in reader:
                 maze_array.append([int(cell) for cell in row])
-
         self.set_maze(maze_array)
         print(f"Maze data loaded from {file_path}")

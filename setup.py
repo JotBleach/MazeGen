@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='maze-generator-jotbleach',
-    version='1.0.1',
+    version='1.1.0',
     description='A Python library for generating and visualizing mazes with custom properties.',
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',

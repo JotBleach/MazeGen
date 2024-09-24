@@ -15,7 +15,7 @@ Maze Generator is a Python library for generating, visualizing, and saving maze 
 You can install the library via `pip`:
 
 ```bash
-pip install pip install maze-generator-jotbleach==1.0.1
+pip install pip install maze-generator-jotbleach==1.1.0
 ```
 
 ## Usage
