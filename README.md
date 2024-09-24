@@ -15,7 +15,7 @@ Maze Generator is a Python library for generating, visualizing, and saving maze 
 You can install the library via `pip`:
 
 ```bash
-pip install pip install maze-generator-jotbleach==1.0.0
+pip install pip install maze-generator-jotbleach==1.0.1
 ```
 
 ## Usage
@@ -61,20 +61,6 @@ maze.save_maze_as_csv('maze.csv')
 maze.load_maze_from_csv('maze.csv')
 ```
 
-#### Save as Text
-
-```python
-# Save the maze grid to a text file
-maze.save_maze_as_text('maze.txt')
-```
-
-#### Load from Text
-
-```python
-# Load a maze grid from a text file
-maze.load_maze_from_text('maze.txt')
-```
-
 ### 4. Customizing the Maze
 
 You can also manually set a maze using a 2D list and visualize it.
@@ -104,14 +90,11 @@ maze.visualize_maze()
 #### Methods:
 
 - `generate_maze()`: Generates a new maze.
-- `get_maze()`: Returns the current maze grid.
 - `set_maze(maze_array)`: Sets the maze grid from a given 2D list.
 - `get_start_end_positions()`: Returns the start and end positions of the maze.
 - `visualize_maze(save_path=None)`: Visualizes the maze using `matplotlib`.
 - `save_maze_as_csv(file_path)`: Saves the maze grid to a CSV file.
 - `load_maze_from_csv(file_path)`: Loads the maze grid from a CSV file.
-- `save_maze_as_text(file_path)`: Saves the maze grid to a text file.
-- `load_maze_from_text(file_path)`: Loads the maze grid from a text file.
 
 ## Contributing
 
