@@ -30,9 +30,24 @@ class MazeGenerator:
             # Initialize the maze grid with walls (1s)
             self.maze = [[1 for i in range(self.width)] for i in range(self.height)]
 
-    def generate_maze(self):
+    def generate_maze(self, start_pos=None, end_pos=None):
+        """
+        Generates the maze using the iterative backtracking algorithm.
+
+        Parameters:
+        - start_pos (tuple, optional): Custom starting position for the maze.
+        - end_pos (tuple, optional): Custom ending position for the maze.
+        """
         if self.width is None or self.height is None:
             raise ValueError("Maze dimensions are not set.")
+
+        # Set custom start and end positions if provided
+        self.start_pos = start_pos if start_pos else (0, 1)
+        self.end_pos = end_pos if end_pos else (self.height - 1, self.width - 2)
+
+        # Ensure the start and end positions are within maze boundaries and on pathable positions
+        if not self._is_valid_position(self.start_pos) or not self._is_valid_position(self.end_pos):
+            raise ValueError("Start or end position is invalid or outside the maze boundaries.")
 
         # Start carving from a random odd coordinate
         start_x = random.randrange(1, self.width, 2)
@@ -41,13 +56,25 @@ class MazeGenerator:
         # Begin the maze generation using iterative backtracking
         self._carve_path_iterative(start_x, start_y)
 
-        # Define the entrance and exit positions
-        self.start_pos = (0, 1)  # Entrance at the top
-        self.end_pos = (self.height - 1, self.width - 2)  # Exit at the bottom
-
         # Carve out the entrance and exit in the maze grid
         self.maze[self.start_pos[0]][self.start_pos[1]] = 0
         self.maze[self.end_pos[0]][self.end_pos[1]] = 0
+
+    def _is_valid_position(self, pos):
+        """
+        Checks if a position is valid within the maze and not on a wall.
+
+        Parameters:
+        - pos (tuple): Position to validate as (row, column).
+
+        Returns:
+        - bool: True if the position is valid, False otherwise.
+        """
+        row, col = pos
+        if 0 <= row < self.height and 0 <= col < self.width:
+            # Ensure the position is not on a wall (1)
+            return self.maze[row][col] == 1
+        return False
 
     def _carve_path_iterative(self, x, y):
         stack = []
